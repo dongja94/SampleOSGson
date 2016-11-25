@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         keywordView = (EditText)findViewById(R.id.edit_keyword);
         listView = (ListView)findViewById(R.id.list_search);
-        mAdapter = new ArrayAdapter<Product>(this, android.R.layout.simple_list_item_1);
+//        mAdapter = new ArrayAdapter<Product>(this, android.R.layout.simple_list_item_1);
+        mAdapter = new ProductAdapter(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(mAdapter);
 
         Button btn = (Button)findViewById(R.id.btn_search);
