@@ -4,9 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -23,9 +21,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
+
 public class MainActivity extends AppCompatActivity {
 
+    @BindView(R.id.edit_keyword)
     EditText keywordView;
+
+    @BindView(R.id.list_search)
     ListView listView;
     ArrayAdapter<Product> mAdapter;
 
@@ -33,35 +39,62 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        keywordView = (EditText)findViewById(R.id.edit_keyword);
-        listView = (ListView)findViewById(R.id.list_search);
+        ButterKnife.bind(this);
+//        keywordView = (EditText)findViewById(R.id.edit_keyword);
+//        listView = (ListView)findViewById(R.id.list_search);
 //        mAdapter = new ArrayAdapter<Product>(this, android.R.layout.simple_list_item_1);
         mAdapter = new ProductAdapter(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(mAdapter);
 
-        Button btn = (Button)findViewById(R.id.btn_search);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String keyword = keywordView.getText().toString();
-                if (!TextUtils.isEmpty(keyword)) {
-//                    new MyTStoreSearchTask().execute(keyword);
-                    TStoreSearchRequest request = new TStoreSearchRequest(keyword);
-                    NetworkManager.getInstance().getNetworkData(request, new NetworkManager.OnResultListener<SearchResult>() {
-                        @Override
-                        public void onSuccess(NetworkRequest<SearchResult> request, SearchResult result) {
-                           mAdapter.addAll(result.products.productList);
-                        }
-
-                        @Override
-                        public void onFail(NetworkRequest<SearchResult> request, int errorCode, String errorMessage, Throwable e) {
-                            Toast.makeText(MainActivity.this, "fail", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            }
-        });
+//        Button btn = (Button)findViewById(R.id.btn_search);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String keyword = keywordView.getText().toString();
+//                if (!TextUtils.isEmpty(keyword)) {
+////                    new MyTStoreSearchTask().execute(keyword);
+//                    TStoreSearchRequest request = new TStoreSearchRequest(keyword);
+//                    NetworkManager.getInstance().getNetworkData(request, new NetworkManager.OnResultListener<SearchResult>() {
+//                        @Override
+//                        public void onSuccess(NetworkRequest<SearchResult> request, SearchResult result) {
+//                           mAdapter.addAll(result.products.productList);
+//                        }
+//
+//                        @Override
+//                        public void onFail(NetworkRequest<SearchResult> request, int errorCode, String errorMessage, Throwable e) {
+//                            Toast.makeText(MainActivity.this, "fail", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                }
+//            }
+//        });
     }
+
+    @OnClick(R.id.btn_search)
+    public void onButtonClick() {
+        String keyword = keywordView.getText().toString();
+        if (!TextUtils.isEmpty(keyword)) {
+//                    new MyTStoreSearchTask().execute(keyword);
+            TStoreSearchRequest request = new TStoreSearchRequest(keyword);
+            NetworkManager.getInstance().getNetworkData(request, new NetworkManager.OnResultListener<SearchResult>() {
+                @Override
+                public void onSuccess(NetworkRequest<SearchResult> request, SearchResult result) {
+                    mAdapter.addAll(result.products.productList);
+                }
+
+                @Override
+                public void onFail(NetworkRequest<SearchResult> request, int errorCode, String errorMessage, Throwable e) {
+                    Toast.makeText(MainActivity.this, "fail", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    @OnItemClick(R.id.list_search)
+    public void onListItemClick(int position, long id) {
+        Toast.makeText(this, "position : " + position , Toast.LENGTH_SHORT).show();
+    }
+
 
     public static final String SEARCH_URL = "http://apis.skplanetx.com/tstore/products?count=&order=D&page=&searchKeyword=%s&version=1";
     class MyTStoreSearchTask extends AsyncTask<String, Integer, SearchResult> {
