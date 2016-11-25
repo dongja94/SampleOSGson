@@ -23,9 +23,10 @@ public class TStoreSearchRequest extends NetworkRequest<SearchResult> {
     @Override
     public Request getRequest() {
         HttpUrl url = new HttpUrl.Builder()
-                .scheme("https")
+                .scheme("http")
                 .host("apis.skplanetx.com")
-                .addPathSegments("/tstore/products")
+                .addPathSegments("tstore/products")
+                .addQueryParameter("order","D")
                 .addQueryParameter("searchKeyword", keyword)
                 .addQueryParameter("version","1")
                 .build();
