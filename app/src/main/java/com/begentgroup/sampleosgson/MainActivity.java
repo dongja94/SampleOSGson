@@ -44,7 +44,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String keyword = keywordView.getText().toString();
                 if (!TextUtils.isEmpty(keyword)) {
-                    new MyTStoreSearchTask().execute(keyword);
+//                    new MyTStoreSearchTask().execute(keyword);
+                    TStoreSearchRequest request = new TStoreSearchRequest(keyword);
+                    NetworkManager.getInstance().getNetworkData(request, new NetworkManager.OnResultListener<SearchResult>() {
+                        @Override
+                        public void onSuccess(NetworkRequest<SearchResult> request, SearchResult result) {
+                           mAdapter.addAll(result.products.productList);
+                        }
+
+                        @Override
+                        public void onFail(NetworkRequest<SearchResult> request, int errorCode, String errorMessage, Throwable e) {
+                            Toast.makeText(MainActivity.this, "fail", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -90,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(SearchResult s) {
             if (s != null) {
-                mAdapter.addAll(s.products.product);
+                mAdapter.addAll(s.products.productList);
             } else {
                 Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
             }
